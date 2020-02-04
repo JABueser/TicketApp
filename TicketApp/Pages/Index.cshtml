@@ -1,0 +1,128 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+@*<form asp-page="./Index" method="get" class="form-inline d-flex align-items-center">
+
+    
+    <div class="form-group mx-sm-1 mb-2">
+        <input type="submit" value="Filter" class="btn btn-primary" />
+    </div>
+</form>*@
+    
+
+
+
+
+    <form asp-page="./Index" method="get" class="form-inline">
+        <div class="form-group mb-2">
+            <label for="Search" style="margin-right:0.5em">Find by Title: </label>
+            <input type="text" class="form-control" id="Search" placeholder="Find by Title" name="SearchString" value="@Model.CurrentFilter">
+        </div>
+
+        <div class="form-group mx-sm-2 mb-2">
+            <label for="StartDate">Start Date: </label>
+            <input type="text" name="DateStart" id="pickerstart" class="form-control mx-sm-1" value="@Model.DateStart" placeholder="mm/dd/yyyy" />
+        </div>
+        <div class="form-group mx-sm-1 mb-2">
+            <label for="EndDate">End Date: </label>
+            <input type="text" name="DateEnd" id="pickerend" class="form-control mx-sm-1" value="@Model.DateEnd" placeholder="mm/dd/yyyy"/>
+        </div>
+        <div class="form-group mx-sm-2 mb-2">
+            <input asp-for="@Model.ShowCritical" class="form-check-input" />
+            <label asp-for="@Model.ShowCritical" class="form-check-label"></label>
+        </div>
+        <div class="form-group mb-2">
+            <input type="submit" value="Search" style="margin-right:1em" class="btn btn-primary" /> <a asp-page="./Index">Back to full List</a>
+        </div>
+    </form>
+
+
+
+<form method="post">
+    <div>
+        <table class="table table-striped">
+            <thead class="thead">
+                <tr>
+                    <th scope="col">
+                        Date
+                        <a asp-page="./Index" asp-route-sortOrder="@Model.DateSort" asp-route-currentFilter="@Model.CurrentFilter">
+                            <i class="fas fa-sort"></i>
+                        </a>
+                    </th>
+                    <th scope="col">
+                        Title
+                        <a asp-page="./Index" asp-route-sortOrder="@Model.TitleSort" asp-route-currentFilter="@Model.CurrentFilter">
+                            <i class="fas fa-sort"></i>
+                        </a>
+                    </th>
+                    <th scope="col">Description</th>
+                    <th scope="col">View</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ticket in Model.Tickets)
+                {
+                    <tr @(ticket.Critical ? "style=background-color:rgba(220,20,60,0.5)" : "")>
+                        <td>@Html.DisplayFor(modelitem => ticket.DateCreated)</td>
+                        <td>@ticket.Title</td>
+                        <td>
+                            @Html.DisplayFor(item => ticket.DescriptionTrimmed)
+                            <br />
+                            @if (ticket.Critical)
+                            {<span class="badge badge-pill badge-danger">Status: Critical</span>}
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-end">
+                                <a class="btn btn-outline-primary" asp-page="./Tickets/Details" asp-route-id="@ticket.ID">Details</a>
+                                @if ((await AuthorizationService.AuthorizeAsync(User, ticket, TicketingOperations.Resolve)).Succeeded)
+                                {
+                                    <button class="btn btn-success" style="margin-left:10px" type="submit" asp-page-handler="resolve" asp-route-id="@ticket.ID">Resolve</button>
+                                }
+                            </div>
+
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+
+        @{
+            var prevDisabled = !Model.Tickets.HasPreviousPage ? "disabled" : "";
+            var nextDisabled = !Model.Tickets.HasNextPage ? "disabled" : "";
+        }
+
+        <a asp-page="./Index"
+           asp-route-sortOrder="@Model.CurrentSort"
+           asp-route-pageIndex="@(Model.Tickets.PageIndex - 1)"
+           asp-route-currentFilter="@Model.CurrentFilter"
+           class="btn btn-primary @prevDisabled">
+            Previous
+        </a>
+        <a asp-page="./Index"
+           asp-route-sortOrder="@Model.CurrentSort"
+           asp-route-pageIndex="@(Model.Tickets.PageIndex + 1)"
+           asp-route-currentFilter="@Model.CurrentFilter"
+           class="btn btn-primary @nextDisabled">
+            Next
+        </a>
+    </div>
+</form>
+
+@section scripts{
+    <script type="text/javascript">
+        $('#pickerstart').datetimepicker({
+            timepicker: false,
+            datepicker: true,
+            format: 'm/d/Y'
+        })
+        $('#pickerend').datetimepicker({
+            timepicker: false,
+            datepicker: true,
+            format: 'm/d/Y'
+        })
+    </script>
+}

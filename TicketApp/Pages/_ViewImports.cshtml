@@ -1,0 +1,9 @@
+@using Microsoft.AspNetCore.Identity
+@using TicketApp
+@using TicketApp.Data
+@namespace TicketApp.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using TicketApp.Authorization;
+@using Microsoft.AspNetCore.Authorization
+@using TicketApp.Models
+@inject IAuthorizationService AuthorizationService

@@ -1,0 +1,48 @@
+﻿@page "{id:int}"
+@model TicketApp.DetailsModel
+@{
+    ViewData["Title"] = "Details";
+}
+
+
+    <div class="container">
+        @if ((await AuthorizationService.AuthorizeAsync(User, Model.Ticket, TicketingOperations.Update)).Succeeded)
+        {
+            <div class="d-flex flex-row-reverse">
+                <a asp-page="./Edit" asp-route-id="@Model.Ticket.ID" class="btn btn-secondary">Edit</a>
+            </div>
+        }
+
+
+        <h3>@Model.Ticket.Title</h3>
+        <p>Date Created: @Model.Ticket.DateCreated</p>
+        @if(Model.Ticket.ResolvedOn > new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified))
+        {
+            <p>Resolved on: @Model.Ticket.ResolvedOn</p>
+        }
+
+        <div style="margin-bottom:1em">
+            @if (Model.Ticket.Critical)
+            {
+                <span class="badge badge-pill badge-danger" style="font-size:medium">Status: Critical</span>
+            }
+            else
+            {
+                <span class="badge badge-pill badge-info" style="font-size:medium">Status: Not Critical</span>
+            }
+        </div>
+
+
+        <h5>Details:</h5>
+        <p>@Model.Ticket.Description</p>
+
+
+
+
+    </div>
+
+
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

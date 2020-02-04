@@ -1,0 +1,39 @@
+﻿@page "{id:int}"
+@model TicketApp.EditModel
+@{
+    ViewData["Title"] = "Edit";
+}
+
+
+<form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+    <input asp-for="Ticket.ID" type="hidden" />
+    <div class="form-group">
+        <label asp-for="Ticket.Title"></label>
+        <input asp-for="Ticket.Title" class="form-control" />
+        <span asp-validation-for="Ticket.Title" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Ticket.Description"></label>
+        @Html.TextAreaFor(model => model.Ticket.Description, new { @rows = "5", @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Ticket.Description, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-check">
+        <input asp-for="Ticket.Critical" class="form-check-input" />
+        <label asp-for="Ticket.Critical" class="form-check-label"></label>
+        <span asp-validation-for="Ticket.Critical" class="text-danger"></span>
+    </div>
+    <div class="form-check">
+        <input asp-for="Ticket.Resolved" class="form-check-input" />
+        <label asp-for="Ticket.Resolved" class="form-check-label"></label>
+        <span asp-validation-for="Ticket.Resolved" class="text-danger"></span>
+    </div>
+
+    <div>
+        <button class="btn btn-success" style="margin-top:1em" type="submit">Save</button>
+    </div>
+</form>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
