@@ -28,7 +28,7 @@ namespace TicketApp
                     context.Database.Migrate();
                     var config = host.Services.GetRequiredService<IConfiguration>();
 
-                    var testUserPw = config["SeedUserPW"];
+                    var testUserPw = "Admin1!";
 
                     SeedData.Initialize(services, testUserPw).Wait();
                 }
